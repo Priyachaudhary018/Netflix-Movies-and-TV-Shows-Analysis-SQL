@@ -1,0 +1,104 @@
+create database netflix ;
+use netflix ;
+/* Q1. How many movies and TV shows are there in total?*/
+
+select count(distinct show_id) from netflix_titles ;
+
+/* Q2. What is the breakdown of movies vs. TV shows in the data? */
+
+select 
+(select count(*) from netflix_titles where type = 'tv show') as show_total,
+(select count(*) from netflix_titles where type = 'movie') as movie_total
+from netflix_titles ;
+
+/* Q3. Total TV showes and movies marked under comedy genres? */
+
+select count(*) from netflix_titles where listed_in like '%Comed%' ;
+
+/* Q4. Total TV showes and movies marked under comedy Romantic? */
+
+select count(*) from netflix_titles where listed_in like '%roman%' ;
+
+/* Q5. Compare the number of titles released per year, arrrange it in descending order */
+
+select count(*) from netflix_titles 
+group by release_year
+order by release_year desc ;
+
+/* Q6.Select year where there was maximum release and count to release*/
+
+select release_year,
+count(*) as total_release 
+from netflix_titles 
+group by release_year
+order by release_year desc ;
+
+/* Q7.List total release distribution over years ?*/
+
+select release_year,
+count(*) as total_release 
+from netflix_titles 
+group by release_year ;
+
+
+/* Q8.List distinct rating? */
+
+select distinct rating from netflix_titles
+where rating not like '%min%' or rating not like Null ;
+
+ /* Q9. Alter table for incorrect data : update duration as 66 min, 74 min, 84 min 
+  where show ID is s5814, s5542, s5795 respectively ? */
+
+SET SQL_SAFE_UPDATES = 0;
+
+update netflix_titles
+set duration = '66 min'
+where show_id ='s5814' ;
+
+update netflix_titles
+set duration = '74 min'
+where show_id ='s5542' ;
+
+update netflix_titles
+set duration = '84 min'
+where show_id ='s5795' ;
+
+
+
+/* Q10. Alter table for incorrect data : remove rating entry 
+  where show ID is s5814, s5542, s5795 respectively ? */
+
+
+update netflix_titles
+set rating = 'null'
+where show_id = 's5814';
+
+update netflix_titles
+set rating = 'null'
+where show_id = 's5542';
+
+update netflix_titles
+set rating = 'null'
+where show_id = 's5795';
+
+/* Q11. create seprate table for rating having two columns show_id and rating ? */
+
+create table Show_Rating (
+show_id varchar (25),
+rating varchar (20)
+);
+INSERT INTO Show_Rating (show_id, rating)
+SELECT show_id, rating FROM netflix_titles ;
+
+
+/* Q12. show distribution based on rating ? */
+
+SELECT distinct rating, COUNT(show_id) 
+FROM netflix_titles 
+GROUP BY rating
+ORDER BY COUNT(show_id) DESC;
+
+/* Q13. Find our showes for which no rating given? */
+
+select title FROM netflix_titles 
+WHERE rating = 'NULL' ;
